@@ -1,0 +1,1741 @@
+{UTF-8}
+Power_flow_Electrolyzers=
+	IF_THEN_ELSE(SCENARIO_SELECTION=0, 0 , final_flow_install_capacity/(1 + EXP(5 - tau \
+		* Time_variable)))
+	~	MW/Year
+	~	Power installed flow of NEW electrolyzers over the years, Power flow Electrolyzers = \
+		f(t)
+		(Nominal power of electrolyzers per year)
+		Sigmoidal function.
+	|
+
+EXOGENOUS_H2_ANY_VIA=
+	(8.16563 + (10-8.16563)*Time_variable/10)*1e+09
+	~	kg/Year
+	~	Exogenous hydrogen demand, independent of production route
+	|
+
+H2_any_via=
+	IF_THEN_ELSE(SCENARIO_SELECTION=5, EXOGENOUS_H2_ANY_VIA , H2_demand_TOTAL - H2_demand_in_DRI_EAF_NG\
+		 )
+	~	kg/Year
+	~	Hydrogen demand satisfied any via (SMR / Electrolyzer)
+	|
+
+H2_demand_TOTAL=
+	H2_demand_in_refineries + H2_demand_in_ammonia_production + H2_demand_in_methanol_production
+	 + H2_demand_in_DRI_EAF_NG 
+	+ H2_demand_in_DRI_EAF_H2 + H2_demand_in_biorefineries
+	~	kg/Year
+	~	Total H2 requirements to satisfy the demand
+	|
+
+Reference=
+	0
+	~	kg/Year
+	~	0
+	|
+
+Feedback=
+	H2_any_via - Total_H2_Electrolyzers
+	~	kg/Year
+	~		|
+
+tau=
+	IF_THEN_ELSE(SCENARIO_SELECTION=4, 0.2 , 0.35 )
+	~	
+	~	Time constant of the sigmoidal curve for the power installed flow of \
+		electrolyzers
+	|
+
+Total_H2_SMR_Mt=
+	Total_H2_SMR/KG_TO_MTONNES
+	~	Mt/Year
+	~	Hydrogen produced with SMR (demand not covered with Electrolyzers) in \
+		Mt/Year
+	|
+
+Capacity_investment_cost_electrolyzers=
+	IF_THEN_ELSE(SCENARIO_SELECTION=0, CAPACITY_INVESTMENT_COST_ELECTROLYZERS_LOW_DEVELOPMENT\
+		(Time) , CAPACITY_INVESTMENT_COST_ELECTROLYZERS_MEDIUM_DEVELOPMENT(Time) )
+	~	Million_2015$/MW
+	~		|
+
+CAPACITY_INVESTMENT_COST_ELECTROLYZERS_HIGH_DEVELOPMENT(
+	[(0,0)-(10,10)],(2020,0.842),(2030,0.461),(2040,0.447),(2050,0.433),(2070,0.433))
+	~	Million_2015$/MW
+	~		|
+
+Natural_Gas_consumption_energy_HHV_TJ_per_Year=
+	Natural_Gas_consumption_energy_HHV/MJ_TO_TJ
+	~	TJ/Year
+	~	TJ NG in HHV per year
+	|
+
+CAPACITY_INVESTMENT_COST_ELECTROLYZERS_MEDIUM_DEVELOPMENT(
+	[(0,0)-(10,10)],(2020,1.133),(2030,0.786),(2040,0.701),(2050,0.617),(2070,0.617))
+	~	Million_2015$/MW
+	~		|
+
+Annual_investment_cost_electrolyzers=
+	Capacity_investment_cost_electrolyzers*Power_installation/MW_TO_GW
+	~	Million_2015$/Year
+	~		|
+
+Annual_investment_cost_electrolyzers_flow_in=
+	Annual_investment_cost_electrolyzers
+	~	Million_2015$/Year
+	~		|
+
+CO2_emissions_flow_in_Steel_industry=
+	Total_CO2_emissions_Steel_industry/KG_TO_MTONNES
+	~	Mt/Year
+	~	Total CO2 emissions in the steel sector (due to H2 generation, EAF \
+		consumption, BF usage) in Mt/Year
+	|
+
+MW_TO_TW=
+	1e+06
+	~	MW/TW
+	~		|
+
+Water_consumption_SMR=
+	"WATER/H2_FACTOR_SMR"*Total_H2_SMR/m3_TO_Million_m3
+	~	Million_m3/Year
+	~	Annual water consumed by all SMR
+	|
+
+Power_installation=
+	Power_flow_Electrolyzers*MW_TO_GW
+	~	GW/Year
+	~	Power installed flow of electrolyzers over the years, in GW/Year. Power flow \
+		Electrolyzers = f(t)
+		(Nominal power of electrolyzers per year)
+		Sigmoidal function. Final capacity = 60 MW. Policy speed = 0.35
+	|
+
+MJ_TO_TJ=
+	1e+06
+	~	MJ/TJ
+	~		|
+
+CAPACITY_INVESTMENT_COST_ELECTROLYZERS_LOW_DEVELOPMENT(
+	[(0,0)-(10,10)],(2020,1.424),(2030,1.111),(2040,0.956),(2050,0.8),(2070,0.8))
+	~	Million_2015$/MW
+	~		|
+
+m3_TO_Million_m3=
+	1e+06
+	~	m3/Million_m3
+	~		|
+
+Electricity_consuption_Electrolyzers_TWh_per_Year=
+	Electricity_consumption_Electrolyzers/MW_TO_TW
+	~	TW*h/Year
+	~	Annual electrical energy consumed by all electrolyzers in TWh/Year
+	|
+
+Total_invested_electrolyzers= INTEG (
+	Annual_investment_cost_electrolyzers_flow_in,
+		0)
+	~	Million_2015$
+	~		|
+
+MW_TO_GW=
+	1/1000
+	~	GW/MW
+	~		|
+
+Total_H2_Electrolyzers_Mt=
+	Total_H2_Electrolyzers/KG_TO_MTONNES
+	~	Mt/Year
+	~	Hydrogen produced with Electrolyzers in Mt/Year
+	|
+
+Water_consumption_Electrolyzers=
+	"WATER/H2_FACTOR_ELECTROLYZERS" * Total_H2_Electrolyzers / m3_TO_Million_m3
+	~	Million_m3/Year
+	~	Annual water consumed by all electrolyzers
+	|
+
+H2_demand_TOTAL_Mt=
+	H2_demand_TOTAL/KG_TO_MTONNES
+	~	Mt/Year
+	~	Total H2 requirements to satisfy the demand in Mt/Year
+	|
+
+Share_of_biodiesel=
+	IF_THEN_ELSE(SCENARIO_SELECTION=2, 0.4/(1 + EXP(5 - 0.35 * Time_variable)) , 0 )
+	~	Dmnl
+	~	Share (0,1) of liquids intaken in refineries corresponding to biodiesel \
+		production
+	|
+
+CO2_emissions_flow_in=
+	Total_CO2_emissions/KG_TO_MTONNES
+	~	Mt/Year
+	~	Total CO2 emissions in the system (supply and demand) (in Mt/Year); \
+		emissions associated with the use of hydrogen
+	|
+
+CO2_emissions_flow_in_H2_generation=
+	Total_CO2_emissions_H2_generation/KG_TO_MTONNES
+	~	Mt/Year
+	~	Total CO2 emissions due to hydrogen generation in Mt/Year
+	|
+
+Ammonia_production=
+	IF_THEN_ELSE(SCENARIO_SELECTION=3, (16.54-8.27*Time_variable/30)*1e+09 , (16.54+0.378\
+		*Time_variable)*1e+09 )
+	~	kg/Year
+	~	Ammonia production in UE (27). Historical data for EU adapted from \
+		(Hydrogen Europe, 2020) and (Index Mundi, s. f.)
+	|
+
+SCENARIO_SELECTION=
+	0
+	~	Dmnl
+	~	SELECT scenario:
+		0: Baseline scenario (Baseline)
+		1: Hydrogen deployment scenario (H2-expansion)
+		2: Ambitious decarbonisation scenario (H2-high-expansion)
+		3: Degrowth scenario (Degrowth)
+		4: Delayed deployment of hydrogen scenario (H2-delayed-expansion)
+		5: European Union Hydrogen Roadmap scenario (EU-H2-roadmap)
+	|
+
+Methanol_production=
+	IF_THEN_ELSE(SCENARIO_SELECTION=3, (3.941 - 1.97*Time_variable/30)*1e+09 , (3.941 + \
+		0.159*Time_variable)*1e+09 )
+	~	kg/Year
+	~	Methanol production in UE (27). Historical data adapted from (Hydrogen Europe, \
+		2020), (Pérez-Fortes et al., 2016) and (European Commission.
+		Directorate General for Internal Market, Industry, Entrepreneurship and \
+		SMEs. et al., 2016)
+	|
+
+KG_TO_MTONNES=
+	1000*1e+06
+	~	kg/Mt
+	~		|
+
+Share_of_BF=
+	IF_THEN_ELSE(SCENARIO_SELECTION=0, 1 , IF_THEN_ELSE( 1 - 1*Time_variable/30<0 , 0 , \
+		1 - 1*Time_variable/30 ) )
+	~	Dmnl
+	~	Share (0,1) of primary steel produced via Blast Furnace
+	|
+
+Share_of_DRI_EAF_H2=
+	IF_THEN_ELSE(SCENARIO_SELECTION=0, 0 , 1/(1+EXP(7.5-tau*Time_variable)) )
+	~	Dmnl
+	~	Share (0,1) of primary steel produced via Direct Reduction entirely with Hydrogen \
+		plus Electric Arc Furnace
+		When "policying" take into account that Share of DRI EAF NG + Share of DRI \
+		EAF H2 <= 1
+	|
+
+Liquids_intakes_in_refineries=
+	IF_THEN_ELSE( SCENARIO_SELECTION=3 , (600 - 300*Time_variable/30)*1e+06 , 600*1e+06 \
+		)
+	~	toe/Year
+	~	Liquids (crude oil or biomass) to be refined. Historical data for EU \
+		adapted from (Eurostat, 2022).
+	|
+
+Total_steel_production=
+	IF_THEN_ELSE(SCENARIO_SELECTION=3, (160.07 - 80.03*Time_variable/30)*1e+09 , (160.07\
+		 - 1.36*Time_variable)*1e+09 )
+	~	kg/Year
+	~	Total steel production in UE (27). Historical data adapted from (EUROFER, \
+		2020) and (EUROFER, 2021).
+	|
+
+Share_of_secondary_steel=
+	IF_THEN_ELSE(SCENARIO_SELECTION=0:OR:SCENARIO_SELECTION=2, 0.41 , IF_THEN_ELSE( Time_variable\
+		>30 , 0.6 , 0.41 + 1*0.19/30*Time_variable ) )
+	~	Dmnl
+	~	Share of the total steel demand produced from scrap. Historical data \
+		adapted from (EUROFER, 2020) and (EUROFER, 2021).
+	|
+
+ELECTRIC_MIX_EMISSION_FACTOR=
+	IF_THEN_ELSE(SCENARIO_SELECTION=0:OR:SCENARIO_SELECTION=1:OR:SCENARIO_SELECTION=4, IF_THEN_ELSE\
+		( 271.8 - 7.55*Time_variable<0 , 0 , 271.8 - 7.55*Time_variable ) , 
+	IF_THEN_ELSE(SCENARIO_SELECTION=5, IF_THEN_ELSE(271.8-8.176*Time_variable<0, 0 , 271.8\
+		-8.176*Time_variable ), 271.8*EXP(-0.1*Time_variable) ))
+	~	kg/(MW*h)
+	~	Emission factor related to the "electric mix" in the EU. Historical values \
+		adapted from (European Environment Agency, 2021).
+	|
+
+Total_Water_consumption=
+	Water_consumption_Electrolyzers+Water_consumption_SMR
+	~	Million_m3/Year
+	~	Annual water consumed by all electrolyzers + all SMR
+	|
+
+Ki=
+	5e-07
+	~	MW/kg/Year
+	~		|
+
+Integ_error=
+	Error*Ki
+	~	MW/(Year*Year)
+	~		|
+
+Error=
+	Feedback - Reference
+	~	kg/Year
+	~		|
+
+Share_of_DRI_EAF_NG=
+	1*IF_THEN_ELSE( 1 - Share_of_BF - Share_of_DRI_EAF_H2<0 , 0 , 1 - Share_of_BF - Share_of_DRI_EAF_H2\
+		 )
+	~	Dmnl
+	~	Share (0,1) of primary steel produced via Direct Reduction with Hydrogen from SMR \
+		(i.e. conventional DRI process with Natural Gas) plus Electric Arc Furnace
+		When "policying" take into account that Share of DRI EAF NG + Share of DRI \
+		EAF H2 <= 1
+	|
+
+Total_H2_SMR=
+	H2_demand_in_DRI_EAF_NG + (1 - Share_of_Electrolyzers)*H2_any_via
+	~	kg / Year
+	~	Hydrogen produced with SMR (demand not covered with Electrolyzers)
+	|
+
+Share_of_Electrolyzers=
+	IF_THEN_ELSE( H2_any_via>MAXIMUM_CF_ELECTROLYZERS*Maximum_H2_production_Electrolyzers\
+		 , MAXIMUM_CF_ELECTROLYZERS*Maximum_H2_production_Electrolyzers/H2_any_via , 1 )
+	~	Dmnl
+	~	Share (0,1) of hydrogen produced via electrolysis (H2 electrolysis / H2 any via)
+		Hypotheses: maximun share of electrolyzers on every time step (MAXIMUN CAPACITY \
+		FACTOR ELECTROLYZERS * Maximum H2 production Electrolyzers)
+		General expression: IF THEN ELSE( share(t) > MAXIMUM CAPACITY FACTOR \
+		ELECTROLYZERS*Maximum H2 production Electrolyzers/H2 any via , MAXIMUM \
+		CAPACITY FACTOR ELECTROLYZERS*Maximum H2 production Electrolyzers/H2 any \
+		via , share(t) )
+	|
+
+Total_H2_Electrolyzers=
+	Share_of_Electrolyzers*H2_any_via
+	~	kg/Year
+	~	Hydrogen produced with Electrolyzers
+	|
+
+H2_INTENSITY_BIODIESEL_TREATING=
+	0.0455
+	~	kg/kg
+	~	Hydrogen requirements (Mt_H2) per unit of biodiesel refined (Mt_biodiesel).
+		
+		Data calibrated based on literature review (bottom-up approach): (IEA, \
+		2019), (European Hydrogen Backbone, 2021)
+	|
+
+Biodiesel_treated_in_biorefineries=
+	Share_of_biodiesel*Liquids_intakes_in_refineries
+	~	toe/Year
+	~	Biodiesel treated in biorefineries using hydrogen
+	|
+
+H2_demand_in_biorefineries=
+	H2_INTENSITY_BIODIESEL_TREATING*Biodiesel_treated_in_biorefineries/toe2kg_BIODIESEL
+	~	kg/Year
+	~	Hydrogen used in biorefineries to treat biodiesel
+	|
+
+toe2kg_BIODIESEL=
+	0.00088373
+	~	toe/kg
+	~	Conversion factor (toe / kg biodiesel)
+	|
+
+Oil_intakes_in_refineries=
+	(1-Share_of_biodiesel)*Liquids_intakes_in_refineries
+	~	toe/Year
+	~	Oil intakes in refineries
+	|
+
+Total_CO2_emissions_NORMALIZED=
+	Total_CO2_emissions / 2.06378e+11
+	~	Dmnl
+	~	Total CO2 emissions in the system (supply and demand) that can be \
+		descarbonized with electrolyzers NORMALIZED in (0, 1)
+	|
+
+Total_CO2_emissions_Steel_industry=
+	"CO2_emission_(EAF)_in_DRI_EAF_H2"+"CO2_emission_(EAF)_in_DRI_EAF_NG"+"CO2_emission_(EAF)_in_Secondary_steel"\
+		+CO2_emission_Electrolyzers_from_DRI_H2
+	+CO2_emission_in_BF+CO2_emission_SMR_from_DRI_H2+CO2_emission_SMR_from_DRI_NG
+	~	kg/Year
+	~	Total CO2 emissions in the steel sector (due to H2 generation, EAF \
+		consumption, BF usage)
+	|
+
+Total_CO2_emissions=
+	"CO2_emission_(EAF)_in_DRI_EAF_H2"+"CO2_emission_(EAF)_in_DRI_EAF_NG"+"CO2_emission_(EAF)_in_Secondary_steel"\
+		+CO2_emission_Electrolyzers
+	+CO2_emission_SMR+CO2_emission_in_BF
+	~	kg/Year
+	~	Total CO2 emissions in the system (supply and demand); emissions \
+		associated with the use of hydrogen
+	|
+
+Total_cumulative_CO2_emissions_H2_generation= INTEG (
+	CO2_emissions_flow_in_H2_generation,
+		0)
+	~	Mt
+	~	Total accumulated CO2 emissions due to H2 generation (from INITIAL TIME)
+	|
+
+Total_CO2_emissions_H2_generation=
+	CO2_emission_Electrolyzers+CO2_emission_SMR
+	~	kg/Year
+	~	Total CO2 emissions due to hydrogen generation
+	|
+
+Total_power_that_have_been_installed_Electrolyzers= INTEG (
+	Power_installation,
+		0)
+	~	GW
+	~	Current power of electrolyzers that have been installed along time 
+		(Nominal power of electrolyzers)
+	|
+
+"WATER/H2_FACTOR_SMR"=
+	7 / 1000
+	~	m3/kg
+	~	Water consumption (m3) per kg H2 produced in SMR. Data calibrated based on \
+		literature review (bottom-up approach): (IEAGHG, 2017), (IEA, 2019), \
+		(Naterer et al., 2010), (Lampert et al., 2016)
+	|
+
+Total_cumulative_CO2_emissions_Steel_industry= INTEG (
+	CO2_emissions_flow_in_Steel_industry,
+		0)
+	~	Mt
+	~	Total accumulated CO2 emissions in the steel sector (due to H2 generation, \
+		EAF consumption, BF usage) (from INITIAL TIME)
+	|
+
+CO2_emission_SMR_from_DRI_H2=
+	NG_EMISSION_FACTOR * Natural_Gas_consumption_energy_HHV_from_DRI_H2
+	~	kg/Year
+	~	Part of the emissions correspondig to DRI H2 process associated with \
+		hydrogen generation via SMR
+	|
+
+Total_cumulative_CO2_emissions= INTEG (
+	CO2_emissions_flow_in,
+		0)
+	~	Mt
+	~	Total accumulated CO2 emissions in the system (supply and demand) (from \
+		INITIAL TIME)
+	|
+
+CO2_emission_Electrolyzers_from_DRI_H2=
+	IF_THEN_ELSE( Total_H2_Electrolyzers = 0 , 0 , H2_demand_in_DRI_EAF_H2_covered_by_Electrolyzers\
+		*CO2_emission_Electrolyzers/Total_H2_Electrolyzers )
+	~	kg/Year
+	~	Part of the emissions correspondig to DRI H2 process associated with \
+		hydrogen generation via Electrolyzers
+	|
+
+Natural_Gas_consumption_mass_HHV_from_DRI_H2=
+	Natural_Gas_consumption_energy_HHV_from_DRI_H2/HHV_NG
+	~	kg/Year
+	~	kg NG per year corresponding to steel production via DRI H2
+	|
+
+Natural_Gas_consumption_energy_HHV_from_DRI_H2=
+	H2_demand_in_DRI_EAF_H2_covered_by_SMR * HHV_H2 / EFFICIENCY_SMR
+	~	MJ/Year
+	~	MJ NG in HHV per year correspondig to steel production via DRI H2
+	|
+
+H2_demand_in_DRI_EAF_H2_covered_by_SMR=
+	H2_demand_in_DRI_EAF_H2 - H2_demand_in_DRI_EAF_H2_covered_by_Electrolyzers
+	~	kg/Year
+	~	Part of the H2 demand from DRI EAF H2 covered by reformers assuming that \
+		hydrogen demand in DRI EAF H2 is shared proportionally between the \
+		electrolyzers and reformers taking into account 'H2 demand sharing'
+	|
+
+H2_demand_in_DRI_EAF_H2_covered_by_Electrolyzers=
+	IF_THEN_ELSE( H2_any_via = 0 , 0 , H2_demand_in_DRI_EAF_H2 * Total_H2_Electrolyzers \
+		/ H2_any_via )
+	~	kg/Year
+	~	Part of the H2 demand from DRI EAF H2 covered by Electrolizers assuming \
+		that hydrogen demand in DRI EAF H2 is shared proportionally between the \
+		electrolyzers and reformers taking into account 'H2 demand sharing'
+	|
+
+VALUE_OPT=
+	MAXIMUM_CF_ELECTROLYZERS * (FINAL_TIME - INITIAL_TIME)
+	~	Year
+	~	Calibration variable required for OPTIMIZATION
+	|
+
+Capacity_factor_Electrolyzers=
+	IF_THEN_ELSE( Total_power_installed_Electrolyzers = 0 , 0 , Total_H2_Electrolyzers *\
+		 LHV_H2 / Efficiency_equivalent 
+	/ HOURS_PER_YEAR
+	 / SECONDS_PER_HOUR / Total_power_installed_Electrolyzers )
+	~	Dmnl
+	~	Capacity factor of all Electrolyzers, defined as: Electrical energy \
+		consumed / Total nominal power
+	|
+
+Footprint_Electrolyzers=
+	FOOTPRIT_INTENSITY_ELECTROLYZERS*Total_power_installed_Electrolyzers
+	~	m*m
+	~	Footprint due to Electrolizers' facilities
+	|
+
+FOOTPRIT_INTENSITY_ELECTROLYZERS=
+	75.5
+	~	m*m/MW
+	~	m2 / MW installed. Data calibrated based on literature review (bottom-up \
+		approach): (IEA, 2019), (Element Energy Ltd, 2018)
+	|
+
+Time_variable=
+	Time - INITIAL_TIME
+	~	Year
+	~	Time variable, starts at t = 0
+	|
+
+EFFICIENCY_ELECTROLYZERS=
+	0.575 + 
+	1*0.35/100 * Time_variable
+	~	Dmnl
+	~	Efficiency of the NEW electrolyzers installed over the years in LHV, Efficiency \
+		Electrolyzers = f(t)
+		Efficiency [=] [MW H2 in LHV] / [MW elec.] = [MWh H2 in LHV] / [MWh elec.]
+	|
+
+CO2_emission_Electrolyzers=
+	ELECTRIC_MIX_EMISSION_FACTOR * Electricity_consumption_Electrolyzers
+	~	kg/Year
+	~	Carbon emission due to "electric mix" from the grid
+	|
+
+CO2_emission_SMR_from_DRI_NG=
+	NG_EMISSION_FACTOR * Natural_Gas_consumption_energy_HHV_from_DRI_NG
+	~	kg/Year
+	~	Part of the emissions correspondig to steel production via DRI NG
+	|
+
+"CO2_emission_(EAF)_in_DRI_EAF_NG"=
+	ELECTRIC_MIX_EMISSION_FACTOR*"Electricity_consumption_(EAF)_in_DRI_EAF_NG"
+	~	kg/Year
+	~	Emissions from EAF in DRI EAF NG process
+	|
+
+Natural_Gas_consumption_energy_HHV_from_DRI_NG=
+	H2_demand_in_DRI_EAF_NG * HHV_H2 / EFFICIENCY_SMR
+	~	MJ/Year
+	~	MJ NG in HHV per year correspondig to steel production via DRI NG
+	|
+
+Natural_Gas_consumption_mass=
+	Natural_Gas_consumption_energy_HHV/HHV_NG
+	~	kg/Year
+	~	kg NG per year
+	|
+
+Natural_Gas_consumption_mass_from_DRI_NG=
+	Natural_Gas_consumption_energy_HHV_from_DRI_NG/HHV_NG
+	~	kg/Year
+	~	kg NG per year corresponding to steel production via DRI NG
+	|
+
+"CO2_emission_(EAF)_in_DRI_EAF_H2"=
+	ELECTRIC_MIX_EMISSION_FACTOR*"Electricity_consumption_(EAF)_in_DRI_EAF_H2"
+	~	kg/Year
+	~	Emissions from EAF in DRI EAF H2 process
+	|
+
+"CO2_emission_(EAF)_in_Secondary_steel"=
+	ELECTRIC_MIX_EMISSION_FACTOR*"Electricity_consumption_(EAF)_in_Secondary_steel"
+	~	kg/Year
+	~	Emissions from EAF for the production of secondary steel
+	|
+
+final_flow_install_capacity=
+	128501
+	~	MW/Year
+	~	Ideal flow of installed capacity at the end of the year (2050)
+	|
+
+HHV_NG=
+	48.52/0.901
+	~	MJ/kg
+	~	NG high heating value
+	|
+
+HOURS_PER_YEAR=
+	365*24
+	~	h/Year
+	~		|
+
+SECONDS_PER_HOUR=
+	3600
+	~	s/h
+	~		|
+
+CO2_emission_SMR=
+	NG_EMISSION_FACTOR * Natural_Gas_consumption_energy_HHV
+	~	kg/Year
+	~	CO2 emissions associated with the production of hydrogen via SMR
+	|
+
+Maximum_H2_production_Electrolyzers=
+	Total_power_installed_Electrolyzers * Efficiency_equivalent / LHV_H2 * SECONDS_PER_HOUR\
+		 * HOURS_PER_YEAR
+	~	kg/Year
+	~	Maximun H2 production per year using all electrolyzers
+	|
+
+MAXIMUM_CF_ELECTROLYZERS=
+	0.975
+	~	Dmnl
+	~	Maximum capacity factor of electrolyzers (due to maintenance)
+	|
+
+Natural_Gas_consumption_energy_HHV=
+	Total_H2_SMR * HHV_H2 / EFFICIENCY_SMR
+	~	MJ/Year
+	~	MJ NG in HHV per year
+	|
+
+HHV_H2=
+	141.9
+	~	MJ/kg
+	~	H2 high heating value
+	|
+
+NG_EMISSION_FACTOR=
+	49.56/1000
+	~	kg/MJ
+	~	kg CO2 / MJ NG in HHV
+	|
+
+EFFICIENCY_SMR=
+	0.75
+	~	Dmnl
+	~	Efficiency of the SMRs installed in HHV
+		Efficiency [=] [MW H2 in HHV] / [MW NG in HHV] = [MW*h H2 in HHV] / [MW*h \
+		NG in HHV]
+	|
+
+Equivalent_hours_Electrolyzers=
+	Capacity_factor_Electrolyzers * HOURS_PER_YEAR
+	~	h/Year
+	~	Annual equivalent hours of electrolyzers, defined as: Total annual \
+		electrical energy consumption / Total power installed -> [MW*h/Year] / \
+		[MW] [=] h/Year
+	|
+
+H2_demand_in_DRI_EAF_H2=
+	H2_INTENSITY_DRI_EAF_H2*Share_of_DRI_EAF_H2*Primary_steel
+	~	kg/Year
+	~	Hydrogen demand from DRI EAF H2 process. This hydrogen can come from any \
+		way of production (the idea is using electrolyzers to produce green H2)
+	|
+
+H2_demand_in_DRI_EAF_NG=
+	H2_INTENSITY_DRI_EAF_NG*Share_of_DRI_EAF_NG*Primary_steel
+	~	kg/Year
+	~	Hydrogen demand from DRI EAF NG process. NOTE THAT THIS HYDROGEN MUST COME \
+		FROM SMR PRODUCTION
+	|
+
+BF_EMISSION_FACTOR=
+	1.87
+	~	kg/kg
+	~	kg CO2 per kg steel produced via BF
+	|
+
+Primary_steel=
+	Share_of_secondary_steel*Total_steel_production
+	~	kg/Year
+	~	Steel produced from iron ore processing
+	|
+
+H2_INTENSITY_DRI_EAF_H2=
+	0.0565
+	~	kg/kg
+	~	Hydrogen requirements (Mt_H2) per unit of steel manufactured (Mt_steel) via HDRI \
+		process. Remember that the HDRI process requires hydrogen produced from \
+		any DR route, since it only uses the pure H2 molecule as feedstock. \
+		Likewise, the HDRI process requires electricity since it also uses \
+		electric arc.
+		Data calibrated based on literature review (bottom-up approach): (IEA, \
+		2019), (European Hydrogen Backbone, 2021), (European Commission. Joint \
+		Research Centre., 2018), (Agora Energiewende, 2021), (Kurrer, 2020), \
+		(Bhaskar et al., 2020), (Vogl et al., 2018), (Ispatguru, 2021), (The \
+		Energy and Resources Institute, 2021), (Midrex Technologies, Inc., 2021), \
+		(Rechberger et al., 2020), (R. R. Wang et al., 2021), (Buergler & Prammer, \
+		2019), (Pimm et al., 2021), (Otto et al., 2017)
+	|
+
+CO2_emission_in_BF=
+	BF_EMISSION_FACTOR*Share_of_BF*Primary_steel
+	~	kg/Year
+	~	Emissions in BF process
+	|
+
+"Electricity_consumption_(EAF)_in_DRI_EAF_H2"=
+	ELECTRICITY_INTENSITY_EAF*Share_of_DRI_EAF_H2*Primary_steel
+	~	MWh/Year
+	~	Electricity consumption in the Electric Arc Furnace in DRI EAF H2 process
+	|
+
+"Electricity_consumption_(EAF)_in_DRI_EAF_NG"=
+	ELECTRICITY_INTENSITY_EAF*Share_of_DRI_EAF_NG*Primary_steel
+	~	MWh/Year
+	~	Electricity consumption in the Electric Arc Furnace in DRI EAF NG process
+	|
+
+"Electricity_consumption_(EAF)_in_Secondary_steel"=
+	ELECTRICITY_INTENSITY_EAF*Secondary_steel
+	~	MWh/Year
+	~	Electricity consumption in the Electric Arc Furnace for the production of \
+		secondary steel
+	|
+
+ELECTRICITY_INTENSITY_EAF=
+	0.565/1000
+	~	MWh/kg
+	~	Electricity requirements (kWh) to manufacture one ton of steel in the electric arc \
+		(includes EAF for secondary steel and for primary steel in DRI and HDRI \
+		processes).
+		
+		Data calibrated based on literature review (bottom-up approach): (Bhaskar \
+		et al., 2020), (Vogl et al., 2018), (Ispatguru, 2021), (Rechberger et al., \
+		2020), (Gajdzik et al., 2021), (Stengel & Schießl, 2014), (HeatTreat \
+		Technologies, s. f.), (Nardin et al., 2014), (Buergler & Prammer, 2019), \
+		(Pimm et al., 2021), (Otto et al., 2017)
+	|
+
+H2_INTENSITY_DRI_EAF_NG=
+	0.0402
+	~	kg/kg
+	~	Hydrogen requirements (Mt_H2) per unit of steel manufactured (Mt_steel) via DRI \
+		process. Remember that the DRI process requires hydrogen produced from the \
+		natural gas reforming (SMR process) as feedstock since it uses the \
+		synthesis gas produced (H2 + CO). Likewise, the DRI process requires \
+		electricity since it also uses electric arc.
+		Data calibrated based on literature review (bottom-up approach): (IEA, \
+		2019), (IEA, 2021), (Agora Energiewende, 2021)
+	|
+
+H2_demand_in_methanol_production=
+	H2_INTENSITY_METHANOL_PRODUCTION*Methanol_production
+	~	kg/Year
+	~	Hydrogen used in the chemical sector to produce methanol
+	|
+
+H2_demand_in_refineries=
+	H2_INTENSITY_OIL_REFINING*Oil_intakes_in_refineries
+	~	kg/Year
+	~	Hydrogen used in refineries to upgrade oil
+	|
+
+H2_INTENSITY_AMMONIA_PRODUCTION=
+	0.1788
+	~	kg/kg
+	~	Hydrogen requirements (Mt_H2) per unit of ammonia manufactured (Mt_ammonia). In this \
+		process, hydrogen acts as feedstock
+		Data calibrated based on literature review (bottom-up approach): (FCHO, \
+		2022), (AIChE The Global Home of Chemical Engineers, 2019), (European \
+		Commission. Joint Research Centre., 2018), (Fasihi et al., 2021), (IEA, \
+		2021), (Deloitte, 2021), (Kakoulaki et al., 2021), (European Hydrogen \
+		Backbone, 2021)
+	|
+
+H2_INTENSITY_METHANOL_PRODUCTION=
+	0.1173
+	~	kg/kg
+	~	Hydrogen requirements (Mt_H2) per unit of ammonia manufactured (Mt_ammonia). In this \
+		process, hydrogen acts as feedstock
+		Data calibrated based on literature review (bottom-up approach): (FCHO, \
+		2022), (AIChE The Global Home of Chemical Engineers, 2019), (European \
+		Commission. Joint Research Centre., 2018), (Fasihi et al., 2021), (IEA, \
+		2021), (Deloitte, 2021), (Kakoulaki et al., 2021), (European Hydrogen \
+		Backbone, 2021)
+	|
+
+H2_INTENSITY_OIL_REFINING=
+	0.00791*1000
+	~	kg/toe
+	~	kg hydrogen per tonne oil intake (i.e. kg H2 per toe). Data based on \
+		literature review.
+	|
+
+Secondary_steel=
+	Share_of_secondary_steel*Total_steel_production
+	~	kg/Year
+	~	Steel produced from scrap
+	|
+
+H2_demand_in_ammonia_production=
+	H2_INTENSITY_AMMONIA_PRODUCTION*Ammonia_production
+	~	kg/Year
+	~	Hydrogen used in the chemical sector to produce ammonia
+	|
+
+Addition_P_installed[AGE]=
+	Power_t_add[AGE]
+	~	MW/Year
+	~	Power installed flow of electrolyzers over the years, vintaging mode
+	|
+
+Efficiency_t[AGE]=
+	Efficiency_ini_t[AGE] + Efficiency_degradated_accum[AGE]
+	~	Dmnl
+	~	Variable analogous to the vector variable ‘Efficiency t ini’, but in \
+		this case the evolution of efficiency as a consequence of its degradation \
+		is taken into account.
+	|
+
+Electricity_consumption_Electrolyzers=
+	Total_power_installed_Electrolyzers * Equivalent_hours_Electrolyzers
+	~	MW*h/Year
+	~	Annual electrical energy consumed by all electrolyzers
+	|
+
+Retirement_P_installed[AGE]=
+	Power_retired[AGE]
+	~	MW/Year
+	~	Power decommissioned flow of electrolyzers over the years, vintaging mode
+	|
+
+Efficiency_degradated_accum[AGE]= INTEG (
+	-Efficiency_degradation[AGE],
+		0)
+	~	Dmnl
+	~	Cumulative degradation in the efficiency of the electrolysers over time, \
+		reflecting the cumulative loss of efficiency as a result of the annual \
+		degradation of each electrolyser.
+	|
+
+Efficiency_equivalent=
+	IF_THEN_ELSE( SUM(Power_installed_accum[AGE!]) = 0 , 0 , SUM("Product_Efficiency_&_Power"\
+		[AGE!])/SUM(Power_installed_accum[AGE!]) )
+	~	Dmnl
+	~	Efficiency equivalent for all electrolyzers, defined as: sum(P[i] * \
+		Efficiency[i] * hours_use[i]) = sum(P[i]) * Efficiency equivalent * \
+		hours_use, where i is each electrolyzer and assuming all of them are used \
+		for the same amount of hours (hours_use[i] = hours_use = Equivalent hours)
+	|
+
+Power_retired[AGE]=
+	IF_THEN_ELSE(Efficiency_t[AGE]<Efficiency_ini_t[AGE]/RETIREMENT_CRITERIA, Power_t[AGE\
+		] , 0 )
+	~	MW/Year
+	~	Power decommissioned flow of electrolyzers over the years, as a \
+		consequence of reaching an efficiency limit
+	|
+
+Power_installed_accum[y0]= INTEG (
+	-Retirement_P_installed[y0],
+		Power_t0) ~~|
+Power_installed_accum[AGE_CHAIN]= INTEG (
+	Addition_P_installed[AGE_CHAIN]-Retirement_P_installed[AGE_CHAIN],
+		0)
+	~	MW
+	~	Current power installed of electrolyzers, vintaging mode
+	|
+
+Power_t[y0]=
+	Power_t_delay[y0] - Power_retired_delay[y0] ~~|
+Power_t[AGE_CHAIN]=
+	Power_t_delay[AGE_CHAIN] + Power_t_add[AGE_CHAIN] - Power_retired_delay[AGE_CHAIN]
+	~	MW/Year
+	~	Vector defined at positions y0, y1, y2, etc., which uses the values of \
+		‘Power t add’ to provide information on the power installed per unit \
+		of time and which also has the variable ‘Power t retired delay’ so \
+		that in the event of retiring this power, the component is null, since in \
+		this case such installations would not exist.
+	|
+
+Power_retired_delay[AGE]= DELAY_FIXED (
+	Power_retired[AGE],1,0)
+	~	MW/Year
+	~	Vector accounting for the electrolysers removed at each instant in time
+	|
+
+Total_power_installed_Electrolyzers=
+	SUM( Power_installed_accum[AGE!] )
+	~	MW
+	~	Current power installed of electrolyzers
+		(Nominal power of electrolyzers)
+	|
+
+Efficiency_degradation[AGE]=
+	Efficiency_t[AGE] * Degradation_t[AGE] * Annual_hours_of_use_Electrolyzers
+	~	1/Year
+	~	Degradation rate of electrolyser efficiency over time, which depends on \
+		the instantaneous efficiency and degradation per hour of use of each \
+		electrolyser.
+	|
+
+"Product_Efficiency_&_Power"[AGE]=
+	Efficiency_t[AGE]*Power_installed_accum[AGE]
+	~	MW
+	~		|
+
+RETIREMENT_CRITERIA=
+	1.1
+	~	Dmnl
+	~	Useful life of the electrolyzer comes to an end when Efficiency (t) = Initial \
+		Efficiency / RETIREMENT CRITERIA
+		
+		Ref. (FCH, 2018): 1.1
+	|
+
+AGE:
+	y0,(y1-y100)
+	~	
+	~		|
+
+Degradation_t_ad[y0]=
+	0 ~~|
+Degradation_t_ad[AGE_CHAIN]=
+	IF_THEN_ELSE(counter_vector[AGE_CHAIN]=counter, DEGRADATION_ELECTROLYZERS , 0 )
+	~	1/h
+	~		|
+
+Degradation_t_delay[y0]= DELAY_FIXED (
+	Degradation_t[y0],1,Degradation_t0) ~~|
+Degradation_t_delay[AGE_CHAIN]= DELAY_FIXED (
+	Degradation_t[AGE_CHAIN],1,0)
+	~	1/h
+	~		|
+
+Degradation_t0=
+	0.2/100/1000
+	~	1/h
+	~	INITIAL Efficiency degradation of the electrolyzers installed
+	|
+
+Power_t_delay[y0]= DELAY_FIXED (
+	Power_t[y0],1,Power_t0) ~~|
+Power_t_delay[AGE_CHAIN]= DELAY_FIXED (
+	Power_t[AGE_CHAIN],1,0)
+	~	MW/Year
+	~	Auxiliary variable needed to store the values of the variable Power_t
+	|
+
+Efficiency_ini_t[y0]=
+	Efficiency_ini_t_delay[y0] ~~|
+Efficiency_ini_t[AGE_CHAIN]=
+	Efficiency_ini_t_delay[AGE_CHAIN] + Efficiency_ini_t_add[AGE_CHAIN]
+	~	Dmnl
+	~	Efficiency of the electrolysers that were installed in the time range y1, \
+		y2, y3, etc.
+	|
+
+Efficiency_ini_t_add[y0]=
+	0 ~~|
+Efficiency_ini_t_add[AGE_CHAIN]=
+	IF_THEN_ELSE(counter_vector[AGE_CHAIN]=counter, EFFICIENCY_ELECTROLYZERS , 0 )
+	~	Dmnl
+	~		|
+
+Efficiency_ini_t_delay[y0]= DELAY_FIXED (
+	Efficiency_ini_t[y0],1,Efficiency_ini_t0) ~~|
+Efficiency_ini_t_delay[AGE_CHAIN]= DELAY_FIXED (
+	Efficiency_ini_t[AGE_CHAIN],1,0)
+	~	Dmnl
+	~		|
+
+DEGRADATION_ELECTROLYZERS=
+	0.15/100/1000
+	~	1/h
+	~	Efficiency degradation of the NEW electrolyzers installed over the years (as a share \
+		of efficiency lost for each hour of electrolyser use), Degradation \
+		Electrolyzers = f(t)
+		(p.u. Degradation per hour)
+	|
+
+Degradation_t[y0]=
+	Degradation_t_delay[y0] ~~|
+Degradation_t[AGE_CHAIN]=
+	Degradation_t_delay[AGE_CHAIN] + Degradation_t_ad[AGE_CHAIN]
+	~	1/h
+	~	Efficiency degradation of the electrolysers that were installed in the \
+		time range y1, y2, y3, etc.
+	|
+
+Power_t_add[y0]=
+	0 ~~|
+Power_t_add[AGE_CHAIN]=
+	IF_THEN_ELSE(counter_vector[AGE_CHAIN]=counter, Power_flow_Electrolyzers , 0 )
+	~	MW/Year
+	~	The variable ‘Power t add’ is a vector defined at positions y0, y1, \
+		y2, etc. and storing in these positions the information of ‘Power flow \
+		Electrolyzers’ in the corresponding time range, i.e. at position y1 it \
+		stores the value of ‘Power flow Electrolyzers’ installed in the range \
+		t ∈ [1,2), at position y2 it stores the value of ‘Power flow \
+		Electrolyzers’ installed in the range t ∈ [2,3), etc.
+	|
+
+Efficiency_ini_t0=
+	0.68
+	~	Dmnl
+	~	INITIAL Efficiency of the electrolyzers installed
+	|
+
+Power_t0=
+	0*99
+	~	MW/Year
+	~	INITIAL Power installed flow of electrolyzers
+	|
+
+AGE_CHAIN:
+	(y1-y100)
+	~	
+	~		|
+
+counter_vector[y0]=
+	0 ~~|
+counter_vector[AGE_CHAIN]=
+	1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,\
+		32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59\
+		,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87\
+		,88,89,90,91,92,93,94,95,96,97,98,99,100
+	~	
+	~	Counter keeping track of the number of simulated years
+	|
+
+counter=
+	counter_delay + 1
+	~	
+	~		|
+
+counter_delay= DELAY_FIXED (
+	counter, 1, -1)
+	~	
+	~		|
+
+Annual_hours_of_use_Electrolyzers=
+	Equivalent_hours_Electrolyzers
+	~	h/Year
+	~	Annual hours of use per electrolyzer
+		Suposed "Annual hours of use Electrolyzers" = "Equivalent hours \
+		Electrolyzers"
+	|
+
+"WATER/H2_FACTOR_ELECTROLYZERS"=
+	9 / 1000
+	~	m3/kg
+	~	Water consumption (m3) per kg H2 produced in electrolyzers. Data \
+		calibrated based on literature review (bottom-up approach): (IEAGHG, \
+		2017), (Webber, 2007), (IEA, 2019).
+	|
+
+LHV_H2=
+	119.9
+	~	MJ/kg
+	~	H2 low heating value
+	|
+
+********************************************************
+	.Control
+********************************************************~
+		Simulation Control Parameters
+	|
+
+FINAL_TIME=
+	2050
+	~	Year
+	~	The final time for the simulation.
+	|
+
+INITIAL_TIME  = 2020
+	~	Year
+	~	The initial time for the simulation.
+	|
+
+SAVEPER  = 1
+	~	Year [0,?]
+	~	The frequency with which output is stored.
+	|
+
+TIME_STEP  = 0.03125
+	~	Year [0,?]
+	~	The time step for the simulation.
+	|
+
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*Intro-view
+$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,100,0
+12,1,0,1357,440,203,54,3,135,0,24,-1,0,0,0,-1--1--1,0-0-0,|20|B|255-0-0,0,0,0,0,0,0
+EU energy model for on-site hydrogen supply and its use as feedstock in the industrial sector
+12,2,0,1385,719,118,28,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+Comment: increasing the TIMESTEP reduces the accuracy of the model (Recommended value=0.03125)
+12,3,0,1375,664,45,11,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+(13-12-2024)
+12,4,0,1736,484,56,11,8,135,0,16,-1,0,0,0,-1--1--1,0-0-0,||B|0-0-0,0,0,0,0,0,0
+Model structure
+12,5,0,1740,599,44,18,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+SMR H2 production
+12,6,0,1737,515,40,11,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+H2 demand
+12,7,0,1740,551,64,16,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+Electrolyzer H2 production
+12,8,0,1745,646,51,13,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+CO2 emissions
+12,9,0,1359,611,211,30,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+Group on Energy, Economy and System Dynamics, School of Industrial Engineering, University of Valladolid, Valladolid, Spain (https://geeds.es/en/)
+12,10,0,890,365,108,27,8,135,0,10,-1,0,0,0,-1--1--1,-1--1--1,|20||0-0-0,0,0,0,0,0,0
+LEGEND
+12,11,0,890,418,195,27,8,135,0,2,-1,0,0,0,-1--1--1,-1--1--1,|||0-0-0,0,0,0,0,0,0
+Lower-case variables: Time-dependent variables
+12,12,0,892,568,82,82,6,135,0,3,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+Hexagon-shape: scenario selection (there are 6 predefined options)
+12,13,0,887,464,191,28,8,135,0,2,-1,0,0,0,-1--1--1,-1--1--1,|||0-0-0,0,0,0,0,0,0
+Upper-case variables: Constant variables
+12,14,0,892,749,85,85,2,135,0,3,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+Circle-shape: input variables (currently affected by predefined scenarios), considering both policies and hypotheses
+12,15,0,1356,539,211,30,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+Juan Manuel Campos Rodríguez, Íñigo Capellán-Pérez, Gonzalo Parrado-Hernando, Fernando Antonio Frechoso Escudero
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*H2 demand
+$192-192-192,0,Arial Unicode MS|12||0-0-0|0-0-0|0-0-255|-1--1--1|255-255-255|96,96,36,0
+10,1,Oil intakes in refineries,1066,583,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,2,H2 INTENSITY OIL REFINING,1117,698,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,3,H2 demand in refineries,1428,638,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,4,1,3,1,0,0,0,0,192,0,-1--1--1,,1|(1241,572)|
+1,5,2,3,1,0,0,0,0,192,0,-1--1--1,,1|(1279,698)|
+10,6,Ammonia production,1071,806,50,50,2,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,7,H2 INTENSITY AMMONIA PRODUCTION,1120,933,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,8,Methanol production,1063,1035,50,50,2,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,9,H2 INTENSITY METHANOL PRODUCTION,1113,1160,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,10,H2 demand in ammonia production,1432,860,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,11,H2 demand in methanol production,1420,1088,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,12,6,10,1,0,0,0,0,192,0,-1--1--1,,1|(1253,804)|
+1,13,7,10,1,0,0,0,0,192,0,-1--1--1,,1|(1263,934)|
+1,14,8,11,1,0,0,0,0,192,0,-1--1--1,,1|(1241,1047)|
+1,15,9,11,1,0,0,0,0,192,0,-1--1--1,,1|(1260,1151)|
+10,16,Total steel production,1570,586,50,50,2,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,17,Share of secondary steel,1732,845,50,50,2,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,18,Primary steel,1991,623,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,19,Secondary steel,1961,913,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,20,16,18,1,0,0,0,0,192,0,-1--1--1,,1|(1734,483)|
+1,21,17,18,1,0,0,0,0,192,0,-1--1--1,,1|(1912,735)|
+1,22,16,19,1,0,0,0,0,192,0,-1--1--1,,1|(1611,845)|
+1,23,17,19,1,0,0,0,0,192,0,-1--1--1,,1|(1818,905)|
+10,24,Share of DRI EAF NG,1812,334,50,50,2,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,25,Share of DRI EAF H2,1978,291,52,52,2,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,26,Share of BF,1613,283,54,54,2,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,27,H2 demand in DRI EAF NG,2376,417,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,28,H2 demand in DRI EAF H2,2398,801,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,29,H2 INTENSITY DRI EAF NG,2174,473,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,30,H2 INTENSITY DRI EAF H2,2179,853,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,31,Primary steel,2160,363,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,32,31,27,1,0,0,0,0,192,0,-1--1--1,,1|(2262,359)|
+10,33,Primary steel,2180,757,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,34,33,28,1,0,0,0,0,192,0,-1--1--1,,1|(2285,754)|
+10,35,"Electricity consumption (EAF) in DRI EAF NG",2500,277,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,36,"Electricity consumption (EAF) in DRI EAF H2",2543,693,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,37,ELECTRICITY INTENSITY EAF,2167,257,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,38,"CO2 emission (EAF) in DRI EAF NG",2729,280,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,39,"CO2 emission (EAF) in DRI EAF H2",2778,691,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,40,37,35,1,0,0,0,0,192,0,-1--1--1,,1|(2329,240)|
+1,41,31,35,1,0,0,0,0,192,0,-1--1--1,,1|(2296,305)|
+1,42,35,38,1,0,0,0,0,192,0,-1--1--1,,1|(2613,316)|
+10,43,ELECTRICITY INTENSITY EAF,2182,655,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,44,33,36,1,0,0,0,0,192,0,-1--1--1,,1|(2333,706)|
+1,45,43,36,1,0,0,0,0,192,0,-1--1--1,,1|(2349,648)|
+1,46,36,39,1,0,0,0,0,192,0,-1--1--1,,1|(2658,740)|
+10,47,Primary steel,2963,509,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,48,CO2 emission in BF,3198,429,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,49,BF EMISSION FACTOR,3048,309,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,50,47,48,1,0,0,0,0,192,0,-1--1--1,,1|(3052,453)|
+1,51,49,48,1,0,0,0,0,192,0,-1--1--1,,1|(3159,350)|
+10,52,ELECTRICITY INTENSITY EAF,3028,709,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,53,"Electricity consumption (EAF) in Secondary steel",3185,805,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,54,Secondary steel,3027,866,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,55,"CO2 emission (EAF) in Secondary steel",3410,779,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,56,52,53,1,0,0,0,0,192,0,-1--1--1,,1|(3085,789)|
+1,57,54,53,1,0,0,0,0,192,0,-1--1--1,,1|(3119,875)|
+1,58,53,55,1,0,0,0,0,192,0,-1--1--1,,1|(3303,833)|
+10,59,Share of BF,2916,377,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,60,Share of DRI EAF H2,2635,845,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,61,Share of DRI EAF NG,2566,416,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,62,61,27,1,0,0,0,0,192,0,-1--1--1,,1|(2460,366)|
+1,63,61,35,1,0,0,0,0,192,0,-1--1--1,,1|(2552,350)|
+1,64,60,36,1,0,0,0,0,192,0,-1--1--1,,1|(2608,781)|
+1,65,60,28,1,0,0,0,0,192,0,-1--1--1,,1|(2467,775)|
+1,66,59,48,1,0,0,0,0,192,0,-1--1--1,,1|(3040,366)|
+1,67,29,27,1,0,0,0,0,192,0,-1--1--1,,1|(2288,494)|
+1,68,30,28,1,0,0,0,0,192,0,-1--1--1,,1|(2297,883)|
+10,69,H2 demand TOTAL,1916,1183,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,70,H2 demand in ammonia production,1678,997,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,71,H2 demand in DRI EAF H2,1892,995,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,72,H2 demand in DRI EAF NG,2085,1042,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,73,H2 demand in methanol production,1666,1136,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,74,H2 demand in refineries,2161,1179,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,75,70,69,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,76,71,69,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,77,72,69,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,78,74,69,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,79,73,69,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,80,H2 any via,2406,1177,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,81,69,80,1,0,0,0,0,192,0,-1--1--1,,1|(2126,1264)|
+1,82,72,80,1,0,0,0,0,192,0,-1--1--1,,1|(2287,1070)|
+10,83,ELECTRIC MIX EMISSION FACTOR,2757,818,75,30,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,84,ELECTRIC MIX EMISSION FACTOR,3449,907,75,30,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,85,ELECTRIC MIX EMISSION FACTOR,2709,526,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,86,85,38,1,0,0,0,0,192,0,-1--1--1,,1|(2682,415)|
+1,87,85,39,1,0,0,0,0,192,0,-1--1--1,,1|(2767,603)|
+1,88,85,55,1,0,0,0,0,192,0,-1--1--1,,1|(3186,640)|
+10,89,Time,980,379,75,30,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,90,Time,980,598,75,30,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,91,Time,983,827,75,30,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,92,Time variable,632,883,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,93,92,6,1,0,0,0,0,192,0,-1--1--1,,1|(752,756)|
+1,94,92,8,1,0,0,0,0,192,0,-1--1--1,,1|(700,1019)|
+10,95,Time variable,1810,444,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,96,Time variable,1995,785,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,97,Time,1771,417,75,30,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,98,Time,1939,362,75,30,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,99,Time,1743,775,75,30,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,100,95,25,1,0,0,0,0,192,0,-1--1--1,,1|(1914,428)|
+1,101,96,17,1,0,0,0,0,192,0,-1--1--1,,1|(1876,845)|
+10,102,Biodiesel treated in biorefineries,1056,262,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,103,Liquids intakes in refineries,554,444,56,56,2,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,104,92,103,1,0,0,0,0,192,0,-1--1--1,,1|(479,673)|
+10,105,Share of biodiesel,951,440,49,49,2,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,106,103,102,1,0,0,0,0,192,0,-1--1--1,,1|(686,228)|
+1,107,103,1,1,0,0,0,0,192,0,-1--1--1,,1|(746,670)|
+10,108,Time variable,1136,504,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,109,108,105,1,0,0,0,0,192,0,-1--1--1,,1|(1068,439)|
+1,110,105,102,1,0,0,0,0,192,0,-1--1--1,,1|(955,341)|
+1,111,105,1,1,0,0,0,0,192,0,-1--1--1,,1|(975,533)|
+10,112,H2 INTENSITY BIODIESEL TREATING,1133,342,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,113,H2 demand in biorefineries,1385,306,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,114,102,113,1,0,0,0,0,192,0,-1--1--1,,1|(1217,241)|
+1,115,112,113,1,0,0,0,0,192,0,-1--1--1,,1|(1269,370)|
+10,116,toe2kg BIODIESEL,1306,483,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,117,116,113,1,0,0,0,0,192,0,-1--1--1,,1|(1375,398)|
+10,118,H2 demand in biorefineries,1672,1239,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,119,118,69,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,120,95,26,1,0,0,0,0,192,0,-1--1--1,,1|(1643,369)|
+1,121,26,24,1,0,0,0,0,192,0,-1--1--1,,1|(1725,221)|
+1,122,25,24,1,0,0,0,0,192,0,-1--1--1,,1|(1875,236)|
+1,123,95,16,1,0,0,0,0,192,0,-1--1--1,,1|(1639,502)|
+10,124,tau,1918,144,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,125,124,25,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,126,SCENARIO SELECTION,782,326,86,86,6,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,127,126,103,1,0,0,0,0,192,0,-1--1--1,,1|(633,376)|
+1,128,126,105,1,0,0,0,0,192,0,-1--1--1,,1|(886,346)|
+10,129,SCENARIO SELECTION,845,876,86,86,6,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,130,129,6,1,0,0,0,0,192,0,-1--1--1,,1|(959,797)|
+1,131,129,8,1,0,0,0,0,192,0,-1--1--1,,1|(922,970)|
+10,132,SCENARIO SELECTION,1490,117,86,86,6,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,133,132,26,1,0,0,0,0,192,0,-1--1--1,,1|(1512,214)|
+1,134,132,25,1,0,0,0,0,192,0,-1--1--1,,1|(1756,101)|
+10,135,SCENARIO SELECTION,1782,639,86,86,6,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,136,135,16,1,0,0,0,0,192,0,-1--1--1,,1|(1668,594)|
+1,137,135,17,1,0,0,0,0,192,0,-1--1--1,,1|(1784,758)|
+10,138,H2 demand TOTAL Mt,1744,1398,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,139,69,138,1,0,0,0,0,192,0,-1--1--1,,1|(1828,1270)|
+10,140,KG TO MTONNES,1526,1449,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,141,140,138,1,0,0,0,0,192,0,-1--1--1,,1|(1664,1507)|
+10,142,FINAL TIME,765,477,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,143,EXOGENOUS H2 ANY VIA,2496,1457,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,144,SCENARIO SELECTION,2076,1479,86,86,6,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,145,143,80,1,0,0,0,0,192,0,-1--1--1,,1|(2463,1319)|
+1,146,144,80,1,0,0,0,0,192,0,-1--1--1,,1|(2292,1329)|
+10,147,Time variable,2375,1576,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,148,147,143,1,0,0,0,0,192,0,-1--1--1,,1|(2454,1538)|
+12,149,0,1087,1306,142,52,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+Note that the model considers on-site hydrogen production and consumption (i.e. without hydrogen storage and distribution), so in this case H2_demand = H2_production.
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*H2 demand sharing
+$192-192-192,0,Arial Unicode MS|12||0-0-0|0-0-0|0-0-255|-1--1--1|255-255-255|96,96,59,0
+10,1,H2 any via,636,521,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,2,Maximum H2 production Electrolyzers,792,376,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,3,Total H2 Electrolyzers,1123,384,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,4,Efficiency equivalent,1239,248,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,5,Capacity factor Electrolyzers,1483,412,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,6,3,5,1,0,0,0,0,192,0,-1--1--1,,1|(1294,468)|
+1,7,4,5,1,0,0,0,0,192,0,-1--1--1,,1|(1401,309)|
+10,8,LHV H2,1669,561,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,9,8,5,1,0,0,0,0,192,0,-1--1--1,,1|(1629,479)|
+10,10,MAXIMUM CF ELECTROLYZERS,1055,630,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,11,Total power installed Electrolyzers,1389,577,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,12,11,5,1,0,0,0,0,192,0,-1--1--1,,1|(1467,508)|
+10,13,Total H2 SMR,1187,707,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,14,1,13,1,0,0,0,0,192,0,-1--1--1,,1|(773,762)|
+10,15,H2 demand in DRI EAF NG,1485,745,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,16,15,13,1,0,0,0,0,192,0,-1--1--1,,1|(1292,784)|
+10,17,HOURS PER YEAR,1621,227,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,18,SECONDS PER HOUR,1812,331,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,19,17,5,1,0,0,0,0,192,0,-1--1--1,,1|(1546,305)|
+1,20,18,5,1,0,0,0,0,192,0,-1--1--1,,1|(1625,358)|
+10,21,Share of Electrolyzers,855,540,56,56,2,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,22,1,21,1,0,0,0,0,192,0,-1--1--1,,1|(713,600)|
+1,23,1,3,1,0,0,0,0,192,0,-1--1--1,,1|(810,264)|
+1,24,21,3,1,0,0,0,0,192,0,-1--1--1,,1|(909,404)|
+1,25,21,13,1,0,0,0,0,192,0,-1--1--1,,1|(916,683)|
+1,26,2,21,1,0,0,0,0,192,0,-1--1--1,,1|(789,463)|
+1,27,10,21,1,0,0,0,0,192,0,-1--1--1,,1|(977,514)|
+10,28,Total H2 Electrolyzers Mt,1238,114,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,29,3,28,1,0,0,0,0,192,0,-1--1--1,,1|(1142,210)|
+10,30,Total H2 SMR Mt,1394,877,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,31,13,30,1,0,0,0,0,192,0,-1--1--1,,1|(1228,845)|
+10,32,KG TO MTONNES,796,70,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,33,32,28,1,0,0,0,0,192,0,-1--1--1,,1|(953,23)|
+1,34,32,30,1,0,0,0,0,192,0,-1--1--1,,1|(838,984)|
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*Electrolyzer H2 production
+$192-192-192,0,Arial Unicode MS|12||0-0-0|0-0-0|0-0-255|-1--1--1|255-255-255|96,96,100,0
+10,1,Electricity consumption Electrolyzers,934,351,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,2,Equivalent hours Electrolyzers,635,381,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,3,2,1,1,0,0,0,0,192,0,-1--1--1,,1|(810,454)|
+10,4,LHV H2,1188,355,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,5,Maximum H2 production Electrolyzers,1448,309,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,6,4,5,1,0,0,0,0,192,0,-1--1--1,,1|(1341,389)|
+10,7,Annual hours of use Electrolyzers,993,778,54,54,2,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,8,ELECTRIC MIX EMISSION FACTOR,980,510,45,45,2,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,9,CO2 emission Electrolyzers,1139,475,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,10,Water consumption Electrolyzers,1553,584,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,11,"WATER/H2 FACTOR ELECTROLYZERS",1329,628,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,12,11,10,1,0,0,0,0,192,0,-1--1--1,,1|(1475,702)|
+1,13,1,9,1,0,0,0,0,192,0,-1--1--1,,1|(1072,371)|
+1,14,2,7,1,0,0,0,0,192,0,-1--1--1,,1|(675,661)|
+10,15,Total power installed Electrolyzers,1124,159,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,16,15,1,1,0,0,0,0,192,0,-1--1--1,,1|(1020,220)|
+1,17,15,5,1,0,0,0,0,192,0,-1--1--1,,1|(1272,271)|
+10,18,Efficiency equivalent,1664,456,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,19,18,5,1,0,0,0,0,192,0,-1--1--1,,1|(1637,289)|
+10,20,Capacity factor Electrolyzers,369,292,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,21,20,2,1,0,0,0,0,192,0,-1--1--1,,1|(553,301)|
+10,22,Total H2 Electrolyzers,1325,525,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,23,22,10,1,0,0,0,0,192,0,-1--1--1,,1|(1449,450)|
+10,24,HOURS PER YEAR,383,474,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,25,24,2,1,0,0,0,0,192,0,-1--1--1,,1|(527,460)|
+10,26,HOURS PER YEAR,1339,176,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,27,SECONDS PER HOUR,1519,184,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,28,26,5,1,0,0,0,0,192,0,-1--1--1,,1|(1378,237)|
+1,29,27,5,1,0,0,0,0,192,0,-1--1--1,,1|(1469,225)|
+1,30,8,9,1,0,0,0,0,192,0,-1--1--1,,1|(1044,451)|
+10,31,Time variable,530,639,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,32,Time,366,600,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,33,INITIAL TIME,366,691,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,34,33,31,1,0,0,0,0,192,0,-1--1--1,,1|(471,675)|
+1,35,32,31,1,0,0,0,0,192,0,-1--1--1,,1|(456,597)|
+10,36,Time variable,1162,556,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,37,36,8,1,0,0,0,0,192,0,-1--1--1,,1|(1052,590)|
+10,38,Water consumption SMR,1722,785,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,39,Total Water consumption,1814,641,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,40,10,39,1,0,0,0,0,192,0,-1--1--1,,1|(1707,573)|
+1,41,38,39,1,0,0,0,0,192,0,-1--1--1,,1|(1798,722)|
+10,42,SCENARIO SELECTION,805,615,86,86,6,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,43,42,8,1,0,0,0,0,192,0,-1--1--1,,1|(943,589)|
+10,44,Electricity consuption Electrolyzers TWh per Year,924,27,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,45,MW TO TW,762,193,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,46,45,44,1,0,0,0,0,192,0,-1--1--1,,1|(818,113)|
+1,47,1,44,1,0,0,0,0,192,0,-1--1--1,,1|(907,182)|
+10,48,m3 TO Million m3,1501,784,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,49,48,10,1,0,0,0,0,192,0,-1--1--1,,1|(1575,705)|
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*Electrolyzer H2 production - vintaging
+$192-192-192,0,Arial Unicode MS|12||0-0-0|0-0-0|0-0-255|-1--1--1|255-255-255|96,96,100,0
+10,1,Power t,510,713,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,2,Power t delay,336,628,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,3,Power t add,509,832,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,4,1,2,1,0,0,0,0,192,0,-1--1--1,,1|(403,705)|
+1,5,3,1,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,6,counter vector,685,764,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,7,counter,868,905,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,8,Power flow Electrolyzers,606,435,64,64,2,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,9,8,3,1,0,0,0,0,192,0,-1--1--1,,1|(204,548)|
+1,10,6,3,1,0,0,0,0,192,0,-1--1--1,,1|(597,783)|
+1,11,7,3,1,0,0,0,0,192,0,-1--1--1,,1|(673,883)|
+1,12,2,1,1,0,0,0,0,192,0,-1--1--1,,1|(436,659)|
+10,13,Power t0,434,500,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,14,Efficiency ini t,1288,744,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,15,Efficiency ini t delay,1099,660,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,16,Efficiency ini t0,1225,516,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,17,EFFICIENCY ELECTROLYZERS,1442,471,66,66,2,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,18,Efficiency ini t add,1288,861,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,19,17,18,1,0,0,0,0,192,0,-1--1--1,,1|(984,554)|
+1,20,14,15,1,0,0,0,0,192,0,-1--1--1,,1|(1182,725)|
+1,21,15,14,1,0,0,0,0,192,0,-1--1--1,,1|(1190,680)|
+1,22,18,14,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,23,counter vector,1535,772,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,24,counter,1531,900,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,25,23,18,1,0,0,0,0,192,0,-1--1--1,,1|(1417,802)|
+1,26,24,18,1,0,0,0,0,192,0,-1--1--1,,1|(1399,900)|
+10,27,Degradation t,1938,759,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,28,Degradation t delay,1757,685,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,29,Degradation t ad,1938,872,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,30,Degradation t0,1864,543,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,31,DEGRADATION ELECTROLYZERS,2057,486,65,65,2,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,32,31,29,1,0,0,0,0,192,0,-1--1--1,,1|(1611,618)|
+1,33,29,27,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,34,27,28,1,0,0,0,0,192,0,-1--1--1,,1|(1828,747)|
+1,35,28,27,1,0,0,0,0,192,0,-1--1--1,,1|(1868,705)|
+10,36,counter vector,2225,797,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,37,counter,2226,914,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,38,36,29,1,0,0,0,0,192,0,-1--1--1,,1|(2082,820)|
+1,39,37,29,1,0,0,0,0,192,0,-1--1--1,,1|(2077,915)|
+1,40,13,2,1,0,0,0,0,192,1,-1--1--1,,1|(362,544)|
+1,41,16,15,1,0,0,0,0,192,1,-1--1--1,,1|(1122,566)|
+1,42,30,28,1,0,0,0,0,192,1,-1--1--1,,1|(1763,597)|
+10,43,Power retired delay,617,635,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,44,43,1,1,0,0,0,0,192,0,-1--1--1,,1|(581,688)|
+10,45,final flow install capacity,648,210,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,46,45,8,1,0,0,0,0,192,0,-1--1--1,,1|(593,291)|
+10,47,Time variable,838,384,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,48,47,8,1,0,0,0,0,192,0,-1--1--1,,1|(722,382)|
+10,49,Time variable,1615,382,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,50,49,17,1,0,0,0,0,192,0,-1--1--1,,1|(1525,403)|
+10,51,Total power that have been installed Electrolyzers,273,250,80,38,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,52,48,520,252,25,15,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,53,55,52,100,0,0,22,0,192,0,-1--1--1,,1|(470,252)|
+1,54,55,51,4,0,0,22,0,192,0,-1--1--1,,1|(393,252)|
+11,55,0,439,252,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,56,Power installation,439,290,75,30,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,57,8,56,1,0,0,0,0,192,0,-1--1--1,,1|(531,333)|
+10,58,tau,691,527,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,59,58,8,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,60,SCENARIO SELECTION,869,526,86,86,6,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,61,60,8,1,0,0,0,0,192,0,-1--1--1,,1|(718,493)|
+10,62,MW TO GW,148,370,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,63,62,56,1,0,0,0,0,192,0,-1--1--1,,1|(311,345)|
+1,64,60,58,1,0,0,0,0,192,0,-1--1--1,,1|(742,543)|
+10,65,VALUE OPT,1049,134,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,66,MAXIMUM CF ELECTROLYZERS,1357,157,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,67,INITIAL TIME,932,32,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,68,FINAL TIME,1161,31,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,69,67,65,1,0,0,0,0,192,0,-1--1--1,,1|(976,87)|
+1,70,68,65,1,0,0,0,0,192,0,-1--1--1,,1|(1117,88)|
+1,71,66,65,1,0,0,0,0,192,0,-1--1--1,,1|(1166,188)|
+12,72,0,995,269,239,56,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+Although the model is a simulation model, a hybrid approach with optimisation is possible. In such optimisation, it is possible to minimise the total cumulative emissions with the minimum electrolytic power required (electrolyser installation policy from a resource and pollutant gas sustainable point of view). See ‘optimisation guidelines’ view for more information.
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*Electrolyzer H2 production - dynamics
+$192-192-192,0,Arial Unicode MS|12||0-0-0|0-0-0|0-0-255|-1--1--1|255-255-255|96,96,100,0
+10,1,counter,667,210,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,2,counter vector,664,114,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,3,counter delay,464,276,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,4,3,1,1,0,0,0,0,192,0,-1--1--1,,1|(558,217)|
+1,5,1,3,1,0,0,0,0,192,0,-1--1--1,,1|(593,258)|
+10,6,Efficiency degradated accum,1312,46,54,26,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,7,48,1680,47,25,15,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,8,10,6,100,0,0,22,0,192,0,-1--1--1,,1|(1440,47)|
+1,9,10,7,4,0,0,22,0,192,0,-1--1--1,,1|(1590,47)|
+11,10,0,1520,47,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,11,Efficiency degradation,1520,85,75,30,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,12,Efficiency t,1313,171,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,13,Efficiency ini t,1083,45,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,14,13,12,1,0,0,0,0,192,0,-1--1--1,,1|(1175,123)|
+1,15,6,12,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,16,Degradation t,1721,130,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,17,16,11,1,0,0,0,0,192,0,-1--1--1,,1|(1608,127)|
+1,18,12,11,1,0,0,0,0,192,0,-1--1--1,,1|(1441,138)|
+10,19,Power retired,1083,325,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,20,13,19,1,0,0,0,0,192,0,-1--1--1,,1|(1097,179)|
+1,21,12,19,1,0,0,0,0,192,0,-1--1--1,,1|(1194,227)|
+10,22,RETIREMENT CRITERIA,1306,427,53,53,2,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,23,Power t,916,405,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,24,23,19,1,0,0,0,0,192,0,-1--1--1,,1|(1016,413)|
+1,25,22,19,1,0,0,0,0,192,0,-1--1--1,,1|(1254,349)|
+10,26,Efficiency equivalent,1817,385,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,27,"Product Efficiency & Power",1613,426,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,28,12,27,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,29,27,26,1,0,0,0,0,192,0,-1--1--1,,1|(1692,359)|
+10,30,Power installed accum,696,564,57,25,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,31,48,329,563,25,15,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,32,40,31,100,0,0,22,0,192,0,-1--1--1,,1|(431,563)|
+1,33,40,30,4,0,0,22,0,192,0,-1--1--1,,1|(580,563)|
+12,34,48,1035,565,25,15,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,35,42,30,100,0,0,22,0,192,0,-1--1--1,,1|(820,565)|
+1,36,42,34,4,0,0,22,0,192,0,-1--1--1,,1|(954,565)|
+1,37,19,42,1,0,0,0,0,192,0,-1--1--1,,1|(850,360)|
+10,38,Power t add,407,432,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,39,38,40,1,0,0,0,0,192,0,-1--1--1,,1|(476,483)|
+11,40,0,515,563,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,41,Addition P installed,515,601,75,30,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+11,42,0,893,565,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,43,Retirement P installed,893,603,75,30,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,44,Power t0,613,435,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,45,44,30,1,0,0,0,0,192,1,-1--1--1,,1|(663,485)|
+1,46,30,27,1,0,0,0,0,192,0,-1--1--1,,1|(1138,654)|
+1,47,30,26,1,0,0,0,0,192,0,-1--1--1,,1|(1311,681)|
+10,48,Power retired delay,941,210,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,49,19,48,1,0,0,0,0,192,0,-1--1--1,,1|(1035,253)|
+10,50,Total power installed Electrolyzers,1016,769,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,51,30,50,1,0,0,0,0,192,0,-1--1--1,,1|(829,711)|
+10,52,Annual hours of use Electrolyzers,1613,218,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,53,52,11,1,0,0,0,0,192,0,-1--1--1,,1|(1539,142)|
+10,54,FOOTPRIT INTENSITY ELECTROLYZERS,1441,753,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,55,Footprint Electrolyzers,1221,838,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,56,50,55,1,0,0,0,0,192,0,-1--1--1,,1|(1157,785)|
+1,57,54,55,1,0,0,0,0,192,0,-1--1--1,,1|(1355,820)|
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*SMR H2 production
+$192-192-192,0,Arial Unicode MS|12||0-0-0|0-0-0|0-0-255|-1--1--1|255-255-255|96,96,100,0
+10,1,HHV H2,747,598,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,2,EFFICIENCY SMR,818,225,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,3,Natural Gas consumption energy HHV,972,417,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,4,CO2 emission SMR,1324,342,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,5,NG EMISSION FACTOR,1075,160,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,6,2,3,1,0,0,0,0,192,0,-1--1--1,,1|(936,320)|
+1,7,1,3,1,0,0,0,0,192,0,-1--1--1,,1|(884,532)|
+1,8,3,4,1,0,0,0,0,192,0,-1--1--1,,1|(1146,511)|
+1,9,5,4,1,0,0,0,0,192,0,-1--1--1,,1|(1272,202)|
+10,10,Total H2 SMR,667,426,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,11,10,3,1,0,0,0,0,192,0,-1--1--1,,1|(784,350)|
+10,12,Natural Gas consumption mass,1187,663,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,13,HHV NG,890,683,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,14,3,12,1,0,0,0,0,192,0,-1--1--1,,1|(1023,586)|
+1,15,13,12,1,0,0,0,0,192,0,-1--1--1,,1|(1027,709)|
+10,16,"WATER/H2 FACTOR SMR",492,315,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,17,Water consumption SMR,424,475,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,18,10,17,1,0,0,0,0,192,0,-1--1--1,,1|(592,511)|
+1,19,16,17,1,0,0,0,0,192,0,-1--1--1,,1|(413,383)|
+11,20,0,1358,551,6,8,2,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,21,Natural Gas consumption energy HHV TJ per Year,873,52,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,22,MJ TO TJ,1421,91,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,23,3,21,1,0,0,0,0,192,0,-1--1--1,,1|(974,237)|
+1,24,22,21,1,0,0,0,0,192,0,-1--1--1,,1|(1204,18)|
+10,25,m3 TO Million m3,458,630,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,26,25,17,1,0,0,0,0,192,0,-1--1--1,,1|(420,557)|
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*CO2 emissions
+$192-192-192,0,Arial Unicode MS|12||0-0-0|0-0-0|0-0-255|-1--1--1|255-255-255|96,96,100,0
+10,1,CO2 emission Electrolyzers,312,396,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,2,CO2 emission SMR,196,534,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,3,"CO2 emission (EAF) in Secondary steel",536,814,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,4,"CO2 emission (EAF) in DRI EAF H2",176,670,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,5,"CO2 emission (EAF) in DRI EAF NG",301,788,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,6,Total CO2 emissions,597,571,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,7,1,6,1,0,0,0,0,192,0,-1--1--1,,1|(506,464)|
+1,8,2,6,1,0,0,0,0,192,0,-1--1--1,,1|(384,520)|
+1,9,4,6,1,0,0,0,0,192,0,-1--1--1,,1|(393,635)|
+1,10,5,6,1,0,0,0,0,192,0,-1--1--1,,1|(471,697)|
+1,11,3,6,1,0,0,0,0,192,0,-1--1--1,,1|(596,692)|
+10,12,Total CO2 emissions Steel industry,1795,433,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,13,ELECTRIC MIX EMISSION FACTOR,145,575,75,30,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,14,NG EMISSION FACTOR,162,764,75,30,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,15,Total cumulative CO2 emissions,1152,415,63,33,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,16,Total cumulative CO2 emissions Steel industry,2297,391,74,27,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,17,48,812,418,25,15,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,18,20,17,100,0,0,22,0,192,0,-1--1--1,,1|(897,418)|
+1,19,20,15,4,0,0,22,0,192,0,-1--1--1,,1|(1029,418)|
+11,20,0,963,418,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,21,CO2 emissions flow in,963,456,75,30,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,22,48,2040,391,25,15,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,23,25,22,100,0,0,22,0,192,0,-1--1--1,,1|(2094,391)|
+1,24,25,16,4,0,0,22,0,192,0,-1--1--1,,1|(2179,391)|
+11,25,0,2130,391,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,26,CO2 emissions flow in Steel industry,2130,429,75,30,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,27,6,21,1,0,0,0,0,192,0,-1--1--1,,1|(729,472)|
+1,28,12,26,1,0,0,0,0,192,0,-1--1--1,,1|(1971,510)|
+10,29,Total CO2 emissions NORMALIZED,934,592,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,30,CO2 emission in BF,1740,145,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,31,"CO2 emission (EAF) in DRI EAF H2",1410,583,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,32,"CO2 emission (EAF) in Secondary steel",1740,740,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,33,CO2 emission SMR from DRI H2,1402,302,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,34,CO2 emission SMR from DRI NG,1414,435,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,35,CO2 emission Electrolyzers from DRI H2,1514,196,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+11,36,0,1523,426,8,6,1,3,0,0,1,0,0,0,0,0,0,0,0,0
+1,37,30,12,1,0,0,0,0,192,0,-1--1--1,,1|(1782,279)|
+1,38,35,12,1,0,0,0,0,192,0,-1--1--1,,1|(1689,303)|
+1,39,33,12,1,0,0,0,0,192,0,-1--1--1,,1|(1589,350)|
+1,40,34,12,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,41,31,12,1,0,0,0,0,192,0,-1--1--1,,1|(1600,520)|
+1,42,32,12,1,0,0,0,0,192,0,-1--1--1,,1|(1783,592)|
+10,43,"CO2 emission (EAF) in DRI EAF NG",1505,699,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,44,43,12,1,0,0,0,0,192,0,-1--1--1,,1|(1673,576)|
+10,45,Total CO2 emissions H2 generation,504,199,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,46,CO2 emission Electrolyzers,275,124,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,47,CO2 emission SMR,285,284,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,48,46,45,1,0,0,0,0,192,0,-1--1--1,,1|(419,135)|
+1,49,47,45,1,0,0,0,0,192,0,-1--1--1,,1|(404,264)|
+10,50,Total cumulative CO2 emissions H2 generation,1018,146,81,34,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,51,48,706,147,25,15,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,52,54,51,100,0,0,22,0,192,0,-1--1--1,,1|(779,147)|
+1,53,54,50,4,0,0,22,0,192,0,-1--1--1,,1|(888,147)|
+11,54,0,834,147,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,55,CO2 emissions flow in H2 generation,834,185,75,30,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,56,45,55,1,0,0,0,0,192,0,-1--1--1,,1|(653,266)|
+10,57,CO2 emission in BF,731,816,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,58,57,6,1,0,0,0,0,192,0,-1--1--1,,1|(690,692)|
+1,59,6,29,1,0,0,0,0,192,0,-1--1--1,,1|(750,537)|
+10,60,KG TO MTONNES,985,294,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,61,60,55,1,0,0,0,0,192,0,-1--1--1,,1|(889,240)|
+1,62,60,21,1,0,0,0,0,192,0,-1--1--1,,1|(954,352)|
+10,63,KG TO MTONNES,2187,569,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,64,63,26,1,0,0,0,0,192,0,-1--1--1,,1|(2148,494)|
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*CO2 emissions - auxiliary calculation
+$192-192-192,0,Arial Unicode MS|12||0-0-0|0-0-0|0-0-255|-1--1--1|255-255-255|96,96,100,0
+10,1,CO2 emission Electrolyzers from DRI H2,1744,478,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,2,Total H2 Electrolyzers,2232,301,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,3,H2 demand in DRI EAF H2,2293,634,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,4,H2 demand in DRI EAF H2 covered by Electrolyzers,2043,500,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,5,H2 demand in DRI EAF H2 covered by SMR,1784,616,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,6,2,4,1,0,0,0,0,192,0,-1--1--1,,1|(2106,364)|
+1,7,3,4,1,0,0,0,0,192,0,-1--1--1,,1|(2142,595)|
+10,8,CO2 emission Electrolyzers,1983,240,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,9,4,5,1,0,0,0,0,192,0,-1--1--1,,1|(1941,605)|
+1,10,3,5,1,0,0,0,0,192,0,-1--1--1,,1|(2102,718)|
+1,11,4,1,1,0,0,0,0,192,0,-1--1--1,,1|(1891,519)|
+1,12,8,1,1,0,0,0,0,192,0,-1--1--1,,1|(1840,327)|
+10,13,H2 any via,2346,425,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,14,13,4,1,0,0,0,0,192,0,-1--1--1,,1|(2181,427)|
+1,15,2,1,1,0,0,0,0,192,0,-1--1--1,,1|(1968,340)|
+10,16,Natural Gas consumption energy HHV from DRI NG,434,462,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,17,CO2 emission SMR from DRI NG,833,385,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,18,16,17,1,0,0,0,0,192,0,-1--1--1,,1|(627,571)|
+10,19,Natural Gas consumption mass from DRI NG,730,679,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,20,16,19,1,0,0,0,0,192,0,-1--1--1,,1|(527,628)|
+10,21,HHV H2,214,647,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,22,HHV NG,420,736,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,23,EFFICIENCY SMR,341,252,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,24,23,16,1,0,0,0,0,192,0,-1--1--1,,1|(424,360)|
+1,25,21,16,1,0,0,0,0,192,0,-1--1--1,,1|(347,584)|
+1,26,22,19,1,0,0,0,0,192,0,-1--1--1,,1|(580,743)|
+10,27,NG EMISSION FACTOR,618,225,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,28,27,17,1,0,0,0,0,192,0,-1--1--1,,1|(796,292)|
+10,29,H2 demand in DRI EAF NG,119,460,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,30,29,16,1,0,0,0,0,192,0,-1--1--1,,1|(260,501)|
+10,31,CO2 emission SMR from DRI H2,1613,367,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,32,EFFICIENCY SMR,1145,261,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,33,NG EMISSION FACTOR,1371,210,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,34,HHV H2,1031,619,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,35,HHV NG,1255,726,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,36,H2 demand in DRI EAF H2 covered by SMR,949,470,75,30,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,37,Natural Gas consumption energy HHV from DRI H2,1263,443,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,38,Natural Gas consumption mass HHV from DRI H2,1520,655,75,30,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,39,36,37,1,0,0,0,0,192,0,-1--1--1,,1|(1092,503)|
+1,40,34,37,1,0,0,0,0,192,0,-1--1--1,,1|(1166,568)|
+1,41,35,38,1,0,0,0,0,192,0,-1--1--1,,1|(1399,741)|
+1,42,37,38,1,0,0,0,0,192,0,-1--1--1,,1|(1312,600)|
+1,43,37,31,1,0,0,0,0,192,0,-1--1--1,,1|(1391,562)|
+1,44,32,37,1,0,0,0,0,192,0,-1--1--1,,1|(1230,345)|
+1,45,33,31,1,0,0,0,0,192,0,-1--1--1,,1|(1555,276)|
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*optimisation guidelines
+$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,100,0
+30,1,EU energy model for on-site hydrogen supply and its use as feedstock in the industrial sector0000.bmp,1817,736,1788,327,8,0,0,0,-1,0,0,0,0,0,0,0,0,0
+///---\\\
+:L<%^E!@
+4:Time
+5:Addition P installed[AGE]
+6:y0
+6:y1
+6:y10
+6:y11
+6:y12
+6:y13
+6:y14
+6:y15
+6:y16
+6:y17
+6:y18
+6:y19
+6:y2
+6:y20
+6:y21
+6:y22
+6:y23
+6:y24
+6:y25
+6:y26
+6:y27
+6:y28
+6:y29
+6:y3
+6:y30
+6:y4
+6:y5
+6:y6
+6:y7
+6:y8
+6:y9
+9:Baseline
+19:5,0
+24:2020
+25:2050
+26:2050
+57:1
+54:0
+55:0
+82:0
+86:0
+59:0
+56:0
+58:0
+71:0
+110:0
+111:0
+44:1252
+46:0
+45:3
+49:0
+50:0
+51:
+52:
+53:
+43:C:\Users\geedsuser\Documents\HYDROGEN\TFG - H2 scenarios V2\EU27_roadmap.xls
+47:
+48:policy.lst
+11:POLICY_H2_INDUSTRY.voc
+100:POLICY_1.voc
+12:POLICY_H2_INDUSTRY.vpd
+101:POLICY_1.vpd
+18:policy.vsc
+20:policy.lst
+15:1,0,0,0,10,0
+27:0,
+34:0,
+42:1
+72:0
+73:0
+35:Date
+36:YYYY
+37:2020
+38:1
+39:1
+40:0
+41:0
+95:0
+96:0
+97:0
+77:0
+78:0
+102:0
+93:0
+94:0
+92:0
+91:0
+90:0
+87:0
+75:
+43:C:\Users\geedsuser\Documents\HYDROGEN\TFG - H2 scenarios V2\EU27_roadmap.xls
+103:8,8,8,3,8
+105:0,0,0,0,0,0,0,0,0,0
+104:Courier|12||0-0-0|0-0-0|-1--1--1|0-0-255|192-192-192|-1--1--1
