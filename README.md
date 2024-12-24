@@ -1,7 +1,7 @@
 # EU energy model for on-site hydrogen supply and its use as feedstock in the industrial sector (Vensim)
 GENERAL INFO
 
-This repository contains the EU energy model for on-site hydrogen supply and its use as feedstock in the industrial sector. The model was developed for the submitted paper to Applied Energy: "From Grey to “Green”: Modelling the Non-Energy Uses of Hydrogen within the EU Energy Transition". The model is implemented in VENSIM (see "EU energy model for on-site hydrogen supply and its use as feedstock in the industrial sector.mdl" file in "VENSIM model" folder) and is an outcome of the LOCOMOTION project. Future developments will involve integrating this model into the WILIAM model within the HYDRA project.
+This repository contains the EU energy model for on-site hydrogen supply and its use as feedstock in the industrial sector. The model was developed for the submitted paper to Applied Energy: "From Grey to “Green”: Modelling the Non-Energy Uses of Hydrogen for the EU Energy Transition". The model is implemented in VENSIM (see "EU energy model for on-site hydrogen supply and its use as feedstock in the industrial sector.mdl" file in "VENSIM model" folder) and is an outcome of the LOCOMOTION project. Future developments will involve integrating this model into the WILIAM model within the HYDRA project.
 
 MODEL CAPABILITIES
 
