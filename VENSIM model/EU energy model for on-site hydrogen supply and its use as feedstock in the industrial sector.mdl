@@ -165,7 +165,9 @@ H2_demand_TOTAL_Mt=
 	|
 
 Share_of_biodiesel=
-	IF_THEN_ELSE(SCENARIO_SELECTION=2, 0.4/(1 + EXP(5 - 0.35 * Time_variable)) , 0 )
+	IF_THEN_ELSE(SCENARIO_SELECTION=2, 0.4/(1 + EXP(5 - 0.35 * Time_variable)) , IF_THEN_ELSE\
+		(SCENARIO_SELECTION=3, ((16.9/(1+EXP(712-0.35*(Time_variable + 2020)))))/((568.5 - \
+		18.0025*Time_variable + 16.9/(1+EXP(712-0.35*(Time_variable + 2020))))) , 0  ) )
 	~	Dmnl
 	~	Share (0,1) of liquids intaken in refineries corresponding to biodiesel \
 		production
@@ -185,7 +187,7 @@ CO2_emissions_flow_in_H2_generation=
 	|
 
 Ammonia_production=
-	IF_THEN_ELSE(SCENARIO_SELECTION=3, (16.54-8.27*Time_variable/30)*1e+09 , (16.54+0.378\
+	IF_THEN_ELSE(SCENARIO_SELECTION=3, (17.298-0.4901*Time_variable)*1e+09 , (17.298+0.2449\
 		*Time_variable)*1e+09 )
 	~	kg/Year
 	~	Ammonia production in UE (27). Historical data for EU adapted from \
@@ -205,8 +207,8 @@ SCENARIO_SELECTION=
 	|
 
 Methanol_production=
-	IF_THEN_ELSE(SCENARIO_SELECTION=3, (3.941 - 1.97*Time_variable/30)*1e+09 , (3.941 + \
-		0.159*Time_variable)*1e+09 )
+	IF_THEN_ELSE(SCENARIO_SELECTION=3, (3.92 + 0.316*Time_variable/30)*1e+09 , (3.92 + 0.159\
+		*Time_variable)*1e+09 )
 	~	kg/Year
 	~	Methanol production in UE (27). Historical data adapted from (Hydrogen Europe, \
 		2020), (Pérez-Fortes et al., 2016) and (European Commission.
@@ -236,24 +238,27 @@ Share_of_DRI_EAF_H2=
 	|
 
 Liquids_intakes_in_refineries=
-	IF_THEN_ELSE( SCENARIO_SELECTION=3 , (600 - 300*Time_variable/30)*1e+06 , 600*1e+06 \
-		)
+	IF_THEN_ELSE( SCENARIO_SELECTION=3 , (568.5 - 18.0025*Time_variable + 16.9/(1+EXP(712\
+		-0.35*(Time_variable + 2020))))*1e+06 , 568.5*1e+06 )
 	~	toe/Year
 	~	Liquids (crude oil or biomass) to be refined. Historical data for EU \
 		adapted from (Eurostat, 2022).
 	|
 
 Total_steel_production=
-	IF_THEN_ELSE(SCENARIO_SELECTION=3, (160.07 - 80.03*Time_variable/30)*1e+09 , (160.07\
-		 - 1.36*Time_variable)*1e+09 )
+	IF_THEN_ELSE(SCENARIO_SELECTION=3, (160.142 - 3.405*Time_variable)*1e+09 , (160.142 \
+		- 1.36*Time_variable)*1e+09 )
 	~	kg/Year
 	~	Total steel production in UE (27). Historical data adapted from (EUROFER, \
 		2020) and (EUROFER, 2021).
 	|
 
 Share_of_secondary_steel=
-	IF_THEN_ELSE(SCENARIO_SELECTION=0:OR:SCENARIO_SELECTION=2, 0.41 , IF_THEN_ELSE( Time_variable\
-		>30 , 0.6 , 0.41 + 1*0.19/30*Time_variable ) )
+	IF_THEN_ELSE(SCENARIO_SELECTION=0:OR:SCENARIO_SELECTION=2, 0.41 , 
+	
+	IF_THEN_ELSE(SCENARIO_SELECTION=3, 0.41 + 0.0112*Time_variable ,
+	
+	IF_THEN_ELSE( Time_variable>30 , 0.6 , 0.41 + 1*0.19/30*Time_variable ) ) )
 	~	Dmnl
 	~	Share of the total steel demand produced from scrap. Historical data \
 		adapted from (EUROFER, 2020) and (EUROFER, 2021).
@@ -1076,35 +1081,35 @@ TIME_STEP  = 0.03125
 V300  Do not put anything below this section - it will be ignored
 *Intro-view
 $-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,100,0
-12,1,0,1357,440,203,54,3,135,0,24,-1,0,0,0,-1--1--1,0-0-0,|20|B|255-0-0,0,0,0,0,0,0
+12,1,0,846,153,203,54,3,135,0,24,-1,0,0,0,-1--1--1,0-0-0,|20|B|255-0-0,0,0,0,0,0,0
 EU energy model for on-site hydrogen supply and its use as feedstock in the industrial sector
-12,2,0,1385,719,118,28,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+12,2,0,874,432,118,28,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
 Comment: increasing the TIMESTEP reduces the accuracy of the model (Recommended value=0.03125)
-12,3,0,1375,664,45,11,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
-(13-12-2024)
-12,4,0,1736,484,56,11,8,135,0,16,-1,0,0,0,-1--1--1,0-0-0,||B|0-0-0,0,0,0,0,0,0
+12,3,0,864,377,45,11,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+(24-05-2024)
+12,4,0,1225,197,56,11,8,135,0,16,-1,0,0,0,-1--1--1,0-0-0,||B|0-0-0,0,0,0,0,0,0
 Model structure
-12,5,0,1740,599,44,18,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+12,5,0,1229,312,44,18,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
 SMR H2 production
-12,6,0,1737,515,40,11,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
+12,6,0,1226,228,40,11,8,135,0,0,-1,0,0,0,0,0,0,0,0,0
 H2 demand
-12,7,0,1740,551,64,16,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+12,7,0,1229,264,64,16,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
 Electrolyzer H2 production
-12,8,0,1745,646,51,13,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+12,8,0,1234,359,51,13,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
 CO2 emissions
-12,9,0,1359,611,211,30,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+12,9,0,848,324,211,30,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
 Group on Energy, Economy and System Dynamics, School of Industrial Engineering, University of Valladolid, Valladolid, Spain (https://geeds.es/en/)
-12,10,0,890,365,108,27,8,135,0,10,-1,0,0,0,-1--1--1,-1--1--1,|20||0-0-0,0,0,0,0,0,0
+12,10,0,379,78,108,27,8,135,0,10,-1,0,0,0,-1--1--1,-1--1--1,|20||0-0-0,0,0,0,0,0,0
 LEGEND
-12,11,0,890,418,195,27,8,135,0,2,-1,0,0,0,-1--1--1,-1--1--1,|||0-0-0,0,0,0,0,0,0
+12,11,0,379,131,195,27,8,135,0,2,-1,0,0,0,-1--1--1,-1--1--1,|||0-0-0,0,0,0,0,0,0
 Lower-case variables: Time-dependent variables
-12,12,0,892,568,82,82,6,135,0,3,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+12,12,0,381,281,82,82,6,135,0,3,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
 Hexagon-shape: scenario selection (there are 6 predefined options)
-12,13,0,887,464,191,28,8,135,0,2,-1,0,0,0,-1--1--1,-1--1--1,|||0-0-0,0,0,0,0,0,0
+12,13,0,376,177,191,28,8,135,0,2,-1,0,0,0,-1--1--1,-1--1--1,|||0-0-0,0,0,0,0,0,0
 Upper-case variables: Constant variables
-12,14,0,892,749,85,85,2,135,0,3,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+12,14,0,381,462,85,85,2,135,0,3,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
 Circle-shape: input variables (currently affected by predefined scenarios), considering both policies and hypotheses
-12,15,0,1356,539,211,30,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
+12,15,0,845,252,211,30,8,7,0,0,-1,0,0,0,0,0,0,0,0,0
 Juan Manuel Campos Rodríguez, Íñigo Capellán-Pérez, Gonzalo Parrado-Hernando, Fernando Antonio Frechoso Escudero
 \\\---/// Sketch information - do not modify anything except names
 V300  Do not put anything below this section - it will be ignored
@@ -1644,7 +1649,7 @@ $-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,100,0
 ///---\\\
 :L<%^E!@
 4:Time
-5:Addition P installed[AGE]
+5:Share of secondary steel
 6:y0
 6:y1
 6:y10
