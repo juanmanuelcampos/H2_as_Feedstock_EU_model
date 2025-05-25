@@ -207,7 +207,7 @@ SCENARIO_SELECTION=
 	|
 
 Methanol_production=
-	IF_THEN_ELSE(SCENARIO_SELECTION=3, (3.92 + 0.316*Time_variable/30)*1e+09 , (3.92 + 0.159\
+	IF_THEN_ELSE(SCENARIO_SELECTION=3, (3.92 + 0.316*Time_variable)*1e+09 , (3.92 + 0.159\
 		*Time_variable)*1e+09 )
 	~	kg/Year
 	~	Methanol production in UE (27). Historical data adapted from (Hydrogen Europe, \
@@ -1056,8 +1056,7 @@ LHV_H2=
 		Simulation Control Parameters
 	|
 
-FINAL_TIME=
-	2050
+FINAL_TIME  = 2050
 	~	Year
 	~	The final time for the simulation.
 	|
@@ -1648,8 +1647,14 @@ $-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,100,0
 30,1,EU energy model for on-site hydrogen supply and its use as feedstock in the industrial sector0000.bmp,1817,736,1788,327,8,0,0,0,-1,0,0,0,0,0,0,0,0,0
 ///---\\\
 :L<%^E!@
+1:EU-H2-roadmap.vdfx
+1:H2-delayed-expansion.vdfx
+1:Degrowth.vdfx
+1:H2-high-expansion.vdfx
+1:H2-expansion.vdfx
+1:Baseline.vdfx
 4:Time
-5:Share of secondary steel
+5:Methanol production
 6:y0
 6:y1
 6:y10
@@ -1682,10 +1687,10 @@ $-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,100,0
 6:y8
 6:y9
 9:Baseline
-19:5,0
+19:36,1
 24:2020
-25:2050
-26:2050
+25:2070
+26:2070
 57:1
 54:0
 55:0
